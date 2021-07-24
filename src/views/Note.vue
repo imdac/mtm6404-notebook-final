@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import db from '../db.js'
+
 export default {
   name: 'Note',
   props: ['id'],
@@ -32,12 +34,33 @@ export default {
       text: ''
     }
   },
+  created: function () {
+    this.getNote(this.id)
+  },
+  beforeRouteUpdate: function (to) {
+    this.getNote(to.params.id)
+  },
   methods: {
+    getNote: function (id) {
+      db.collection('notes').doc(id).get()
+      .then(doc => {
+        if (doc.exists) {
+          this.title = doc.data().title
+          this.text = doc.data().text
+        }
+      })
+    },
     updateNote: function () {
-     
+      db.collection('notes').doc(this.id)
+        .update({
+          title: this.title,
+          text: this.text
+        }).then(() => this.$router.push('/'))
     },
     deleteNote: function () {
-    
+      db.collection('notes').doc(this.id)
+        .delete()
+        .then(() => this.$router.push('/'))
     }
   }  
 }

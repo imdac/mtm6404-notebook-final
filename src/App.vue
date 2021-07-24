@@ -8,7 +8,7 @@
         <button class="btn btn-secondary" @click="showForm = true">&plus;</button>
       </div>
     </div>
-    <router-view/>
+    <router-view :key="$router.fullPath"></router-view>
     <transition enter-active-class="animate__animated animate__bounceIn">
       <div class="modal" v-show="showForm">
         <div class="modal-dialog">
@@ -40,6 +40,8 @@
 </template>
 
 <script>
+import db from './db'
+
 export default {
   data: function () {
     return {
@@ -50,7 +52,13 @@ export default {
   },
   methods: {
     addNote: function () {
-      
+      db.collection('notes').add({
+        title: this.title,
+        text: this.text 
+      }).then(doc => {
+        this.cancelNote()
+        this.$router.push('/note/' + doc.id)
+      })
     },
     cancelNote: function () {
       this.showForm = false
