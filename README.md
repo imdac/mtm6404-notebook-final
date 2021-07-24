@@ -1,2 +1,4 @@
-# mtm6404-notebook
-This repository contains the starter files for the Notebook project.
+# Notebook
+
+## Objective
+Use Vue, Vue Router, and Firestore to create a notebook web application. 
