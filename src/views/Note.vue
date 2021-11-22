@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore'
 import db from '../db.js'
 
 export default {
@@ -34,33 +35,44 @@ export default {
       text: ''
     }
   },
-  created: function () {
-    this.getNote(this.id)
+  created: async function () {
+    const document = await getDoc(doc(db, 'notes', this.id))
+
+    if (document.exists()) {
+      this.title = document.data().title
+      this.text = document.data().text
+    }
   },
   beforeRouteUpdate: function (to) {
     this.getNote(to.params.id)
   },
   methods: {
-    getNote: function (id) {
-      db.collection('notes').doc(id).get()
-      .then(doc => {
-        if (doc.exists) {
-          this.title = doc.data().title
-          this.text = doc.data().text
-        }
+    // getNote: async function (id) {
+    //   const document = await getDoc(doc(db, 'notes', id))
+
+    //   if (document.exists()) {
+    //     this.title = document.data().title
+    //     this.text = document.data().text
+    //   }
+    // },
+    updateNote: async function () {
+      await updateDoc(doc(db, 'notes', this.id), {
+        title: this.title,
+        text: this.text
       })
+      this.$router.push('/')
+      // db.collection('notes').doc(this.id)
+      //   .update({
+      //     title: this.title,
+      //     text: this.text
+      //   }).then(() => this.$router.push('/'))
     },
-    updateNote: function () {
-      db.collection('notes').doc(this.id)
-        .update({
-          title: this.title,
-          text: this.text
-        }).then(() => this.$router.push('/'))
-    },
-    deleteNote: function () {
-      db.collection('notes').doc(this.id)
-        .delete()
-        .then(() => this.$router.push('/'))
+    deleteNote: async function () {
+      await deleteDoc(doc(db, 'notes', this.id))
+      this.$router.push('/')
+      // db.collection('notes').doc(this.id)
+      //   .delete()
+      //   .then(() => this.$router.push('/'))
     }
   }  
 }

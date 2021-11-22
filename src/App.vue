@@ -40,6 +40,7 @@
 </template>
 
 <script>
+import { collection, addDoc } from 'firebase/firestore'
 import db from './db'
 
 export default {
@@ -51,14 +52,15 @@ export default {
     }
   },
   methods: {
-    addNote: function () {
-      db.collection('notes').add({
+    addNote: async function () {
+      const c = collection(db, 'notes')
+      const document = await addDoc(c, {
         title: this.title,
         text: this.text 
-      }).then(doc => {
-        this.cancelNote()
-        this.$router.push('/note/' + doc.id)
       })
+
+      this.cancelNote()
+      this.$router.push('/note/' + document.id)
     },
     cancelNote: function () {
       this.showForm = false

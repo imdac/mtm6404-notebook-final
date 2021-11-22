@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore'
 import db from '../db.js'
 
 export default {
@@ -24,17 +25,16 @@ export default {
     }
   },
   created: function () {
-    db.collection('notes')
-      .orderBy('title')
-      .onSnapshot(snapshot => {
-        const data = []
-        snapshot.forEach(doc => data.push({
-          id: doc.id,
-          title: doc.data().title,
-          text: doc.data().text
-        }))
-        this.notes = data
-      })
+    const q = query(collection(db, 'notes'), orderBy('title'));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const data = []
+      querySnapshot.forEach((doc) => data.push({
+        id: doc.id,
+        title: doc.data().title,
+        text: doc.data().text
+      }))
+      this.notes = data
+    });
   }  
 }
 </script>
