@@ -43,36 +43,17 @@ export default {
       this.text = document.data().text
     }
   },
-  beforeRouteUpdate: function (to) {
-    this.getNote(to.params.id)
-  },
   methods: {
-    // getNote: async function (id) {
-    //   const document = await getDoc(doc(db, 'notes', id))
-
-    //   if (document.exists()) {
-    //     this.title = document.data().title
-    //     this.text = document.data().text
-    //   }
-    // },
     updateNote: async function () {
       await updateDoc(doc(db, 'notes', this.id), {
         title: this.title,
         text: this.text
       })
       this.$router.push('/')
-      // db.collection('notes').doc(this.id)
-      //   .update({
-      //     title: this.title,
-      //     text: this.text
-      //   }).then(() => this.$router.push('/'))
     },
     deleteNote: async function () {
       await deleteDoc(doc(db, 'notes', this.id))
       this.$router.push('/')
-      // db.collection('notes').doc(this.id)
-      //   .delete()
-      //   .then(() => this.$router.push('/'))
     }
   }  
 }
